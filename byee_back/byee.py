@@ -8,8 +8,8 @@ PORT = 8000
 def create_conection():
     connection = mysql.connector.connect(
         host='localhost',
-        user='root',
-        password='root',
+        user='luis',
+        password='71063699La*#',
         database="byee_database"
     )
     return connection
@@ -52,6 +52,55 @@ def create_product(product_data):
     cursor.close()
     connection.close()
     return True
+
+def create_invoice(sale_data):
+    connection = create_conection()
+    cursor = connection.cursor()
+    query = '''INSERT INTO Nota_fiscal_Envio_Venda 
+               (valor, cnpj_emissor, codigo, data_geracao, status, transportadora, data_envio, data_venda, valor_frete, fk_id_comprador) 
+               VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'''
+    values = (
+        sale_data["valor"],
+        sale_data["cnpj_emissor"],
+        sale_data["codigo"],
+        sale_data["data_geracao"],
+        sale_data["status"],
+        sale_data["transportadora"],
+        sale_data["data_envio"],
+        sale_data["data_venda"],
+        sale_data["valor_frete"],
+        sale_data["fk_id_comprador"]
+    )
+
+    cursor.execute(query, values)
+    connection.commit()
+    invoice_id = cursor.lastrowid
+    cursor.close()
+    connection.close()
+    return invoice_id
+
+def send_sale(invoice_id):
+    connection = create_conection()
+    cursor = connection.cursor()
+
+    query = "UPDATE Nota_fiscal_Envio_Venda SET status = 'Enviada' WHERE id = %s"
+    cursor.execute(query, (invoice_id,))
+    connection.commit()
+    cursor.close()
+    connection.close()
+    return True
+
+def get_invoices_by_comprador(comprador_id):
+    connection = create_conection()
+    cursor = connection.cursor(dictionary=True)
+
+    query = 'SELECT * FROM Nota_fiscal_Envio_Venda WHERE fk_id_comprador = %s'
+    cursor.execute(query, (comprador_id,))
+    invoices = cursor.fetchall()
+
+    cursor.close()
+    connection.close()
+    return invoices
 
 def create_cart(user_id):
     connection = create_conection()
@@ -149,8 +198,7 @@ class RequestHandler(http.server.BaseHTTPRequestHandler):
                 print(cart_items)
                 self.wfile.write(json.dumps(cart_items).encode())
             except Exception as e:
-                # Tratamento de erro genérico, ajuste conforme necessário
-                self._set_headers(500)
+                # Tratamento de erro genérico, ajuste conforme necessárioALTER TABLE Nota_fiscal_Envio_Venda MODIFY id INT AUTO_INCREMENT;
                 self.wfile.write(json.dumps({'error': str(e)}).encode())
         elif self.path.startswith('/user-cart-id/'):
             try:
@@ -202,7 +250,6 @@ class RequestHandler(http.server.BaseHTTPRequestHandler):
             content_length = int(self.headers['Content-Length'])
             post_data = self.rfile.read(content_length)
             product_data = json.loads(post_data)
-
             product_id = create_product(product_data)
             if product_id:
                 self._set_headers(201)
@@ -215,7 +262,6 @@ class RequestHandler(http.server.BaseHTTPRequestHandler):
             user_data = json.loads(post_data)
 
             cart_id = get_user_cart_id(user_data['user_id'])
-            print(cart_id)
             if cart_id:
                 self._set_headers(201)
                 self.wfile.write(json.dumps(cart_id).encode())
@@ -230,6 +276,16 @@ class RequestHandler(http.server.BaseHTTPRequestHandler):
             if result:
                 self._set_headers(201)
                 self.wfile.write(json.dumps({'result': result}).encode())
+            else:
+                self._set_headers(400)
+        elif self.path == '/payment-invoice':
+            content_length = int(self.headers['Content-Length'])
+            post_data = self.rfile.read(content_length)
+            invoice_data = json.loads(post_data)
+            invoice_id = create_invoice(invoice_data)
+            if invoice_id:
+                self._set_headers(201)
+                self.wfile.write(json.dumps({'invoice_id': invoice_id}).encode()) #todo
             else:
                 self._set_headers(400)
         else:
