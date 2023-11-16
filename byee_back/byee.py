@@ -8,8 +8,8 @@ PORT = 8000
 def create_conection():
     connection = mysql.connector.connect(
         host='localhost',
-        user='root',
-        password='root',
+        user='luis',
+        password='71063699La*#',
         database="byee_database"
     )
     return connection

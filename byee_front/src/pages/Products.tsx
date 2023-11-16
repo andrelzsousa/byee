@@ -1,48 +1,51 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState } from "react";
 import axios from 'axios';
 import PageNav from "../components/PageNav";
 
-interface User {
-    id: number
+interface Product {
+    id?: number;
     nome: string;
-    telefone: string;
-    endereco_Fk: number;
-    fk_usuario_presente: number | null;
+    tipo: string;
+    preco: number;
+    SKU: string;
+    fk_Usuario_vendedor_fk: number;
 }
 
 function Users() {
-    const [users, setUsers] = useState<User[]>([])
+    const [users, setUsers] = useState<Product[]>([])
 
     useEffect(() => {
         async function fetchData() {
-            try{
-                const res = await axios.get("http://localhost:8000/users")
+            try {
+                const res = await axios.get("http://localhost:8000/products")
                 setUsers(res.data)
-            } catch(error){
+            } catch (error) {
                 console.log(error)
             }
         }
         fetchData()
     }, [setUsers])
-    
+
     return (
         <>
             <PageNav />
             <div className="grid grid-cols-1 gap-2">
                 <div className="flex items-center justify-center bg-gray-200 font-bold">
                     <div className="grid grid-cols-5 w-full text-center">
-                        <div>Id</div>
                         <div>Nome</div>
-                        <div>Telefone</div>
+                        <div>Tipo</div>
+                        <div>Preço</div>
+                        <div>SKU</div>
                         <div>Ações</div>
                     </div>
                 </div>
                 {users.map((user) => (
                     <div key={user.id} className="flex items-center justify-center bg-gray-100 border border-gray-300">
                         <div className="grid grid-cols-5 w-full text-center">
-                            <div>{user.id}</div>
                             <div>{user.nome}</div>
-                            <div>{user.telefone}</div>
+                            <div>{user.tipo}</div>
+                            <div>{user.preco}</div>
+                            <div>{user.SKU}</div>
                             <div className="flex justify-around">
                                 <button className="w-16 bg-blue-500 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-700 focus:ring-offset-2">Editar</button>
                                 <button className="w-16 bg-red-500 text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-700 focus:ring-offset-2">Excluir</button>
@@ -55,4 +58,4 @@ function Users() {
     )
 }
 
-export default Users
+export default Users;

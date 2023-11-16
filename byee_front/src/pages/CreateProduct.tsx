@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Product } from "../types/Product";
 import { useMutation, useQueryClient } from 'react-query';
 import PageNav from '../components/PageNav';
+import { Link } from 'react-router-dom'
 // import { v4 as uuidv4 } from 'uuid';
 
 function CreateProduct() {
@@ -30,7 +31,15 @@ function CreateProduct() {
     const tipo = event.target[2].value
     const SKU = event.target[3].value
     const newProduct: Product = { nome, preco, tipo, SKU, fk_Usuario_vendedor_fk: 1 };
-    await mutation.mutateAsync(newProduct);
+    try {
+      await mutation.mutateAsync(newProduct);
+      window.setTimeout(() => {
+        window.alert("Produto Criado com sucesso");
+        window.location.href = '/';
+      }, 0);
+    } catch (e) {
+      window.alert("Erro ao criar produto. " + e);
+    }
   };
 
 
@@ -50,7 +59,7 @@ function CreateProduct() {
             
             </select>
             <input type="text" placeholder="SKU" className='border border-gray-100 rounded p-1' />
-            <button className='py-2 px-4 bg-gray-100 rounded-full border border-black'>Salvar</button>
+            <button className='py-2 px-4 bg-gray-100 rounded-full border border-black'>Cadastrar</button>
           </form>
         </div>
     </>
