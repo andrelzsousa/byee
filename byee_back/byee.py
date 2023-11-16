@@ -49,9 +49,10 @@ def create_product(product_data):
     
     cursor.execute(query, values)
     connection.commit()
+    product_id = cursor.lastrowid
     cursor.close()
     connection.close()
-    return True
+    return product_id
 
 def create_invoice(sale_data):
     connection = create_conection()
@@ -178,13 +179,56 @@ def add_product_to_cart(cart_id, product_id):
     connection.close()
     return result
 
+def get_products_by_type(product_type):
+    connection = create_conection()
+    cursor = connection.cursor(dictionary=True)
+    
+    query = 'SELECT * FROM Produto WHERE tipo = %s'
+    values = (product_type,)
+    cursor.execute(query, values)
+    products = cursor.fetchall()
+    
+    cursor.close()
+    connection.close()
+    return products
+
+def delete_product(data):
+    connection = create_conection()
+    cursor = connection.cursor(dictionary=True)
+    query = 'DELETE FROM Produto WHERE id = %s'
+    values = [data["id"]]
+    cursor.execute(query, values)
+    connection.commit()
+    cursor.close()
+    connection.close()
+
+def update_product(updated_data):
+    connection = create_conection()
+    cursor = connection.cursor(dictionary=True)
+    query = '''UPDATE Produto
+               SET nome = %s, tipo = %s, preco = %s, SKU = %s, fk_Usuario_vendedor_fk = %s
+               WHERE id = %s'''
+    values = (
+        updated_data["nome"],
+        updated_data["tipo"],
+        updated_data["preco"],
+        updated_data["SKU"],
+        updated_data["fk_Usuario_vendedor_fk"],
+        updated_data["id"]
+    )
+    cursor.execute(query, values)
+    connection.commit()
+    cursor.close()
+    connection.close()
+
+
 class RequestHandler(http.server.BaseHTTPRequestHandler):
 
     def _set_headers(self, status_code=200):
         self.send_response(status_code)
         self.send_header('Content-type', 'application/json')
         self.send_header('Access-Control-Allow-Origin', '*')
-        self.send_header('Access-Control-Allow-Methods', 'GET, OPTIONS, POST')
+        self.send_header('Access-Control-Allow-Methods', 'GET, OPTIONS, POST, PUT, DELETE')
         self.send_header('Access-Control-Allow-Headers', 'Content-Type')
         self.end_headers()
 
@@ -228,6 +272,11 @@ class RequestHandler(http.server.BaseHTTPRequestHandler):
             self._set_headers(200)
             products = get_all_products()
             self.wfile.write(json.dumps(products).encode())
+        elif self.path.startswith('/products_by_type'):
+            self._set_headers(200)
+            product_type = self.path.split('/')[-1]
+            products = get_products_by_type(product_type)
+            self.wfile.write(json.dumps(products).encode())
         else:
             self._set_headers(404)
 
@@ -246,6 +295,7 @@ class RequestHandler(http.server.BaseHTTPRequestHandler):
                 self.wfile.write(json.dumps({'cart_id': cart_id}).encode())
             else:
                 self._set_headers(400)
+
         elif self.path == '/create-product':
             content_length = int(self.headers['Content-Length'])
             post_data = self.rfile.read(content_length)
@@ -288,6 +338,26 @@ class RequestHandler(http.server.BaseHTTPRequestHandler):
                 self.wfile.write(json.dumps({'invoice_id': invoice_id}).encode()) #todo
             else:
                 self._set_headers(400)
+        else:
+            self._set_headers(404)
+
+    def do_PUT(self):
+        if self.path.startswith('/update-product'):
+            content_length = int(self.headers['Content-Length'])
+            put_data = self.rfile.read(content_length)
+            update_data = json.loads(put_data)
+            update_product(update_data)
+            self._set_headers(200)
+        else:
+            self._set_headers(404)
+    
+    def do_DELETE(self):
+        if self.path.startswith('/delete-product'):
+            content_length = int(self.headers['Content-Length'])
+            put_data = self.rfile.read(content_length)
+            data = json.loads(put_data)
+            delete_product(data)
+            self._set_headers(200)
         else:
             self._set_headers(404)
 
