@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import axios from 'axios';
+import PageNav from "../components/PageNav";
 
 interface User {
     id: number
@@ -25,19 +26,22 @@ function Users() {
     }, [setUsers])
     
     return (
-        <div>
-            {users.map((user) => {
-                return(
-                    <>
-                    <div key={user.id} className="flex items-center gap-1">
-                        <p>{user.id}</p>
-                        <p>{user.nome}</p>
-                        <p>{user.telefone}</p>
-                    </div>
-                    </>
-                )
-            })}
-        </div>
+        <>
+            <PageNav />
+            <div>
+                {users.map((user) => {
+                    return(
+                        <>
+                        <div key={user.id} className="flex items-center gap-1">
+                            <p>{user.id}</p>
+                            <p>{user.nome}</p>
+                            <p>{user.telefone}</p>
+                        </div>
+                        </>
+                    )
+                })}
+            </div>
+        </>
     )
 }
 
