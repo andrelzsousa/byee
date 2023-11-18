@@ -51,8 +51,7 @@ function Products() {
     return (
         <>
             <PageNav />
-            
-            <div className="grid grid-cols-1 gap-2 relative">
+            <div className="grid grid-cols-1 gap-2 relative p-10">
             <form onSubmit={handleSubmit} className={`flex-col gap-4 p-5 absolute top-[45%] left-[50%] bg-gray-600 shadow rounded -translate-x-[50%] w-72 ${isOpened ? "flex" : "hidden"} transition-all`}>
                 <h1 className="font-bold text-2xl text-white">Atualizar produto</h1>
                 <input placeholder="Nome" className="border border-black p-1 rounded" type="text" value={nome} onChange={(e) => setNome(e.target.value)}/>
@@ -67,7 +66,7 @@ function Products() {
                 <button type="submit" className="bg-gray-400 rounded p-1">Salvar</button>
                 <div className="absolute top-1 right-4 text-white font-bold text-2xl hover:text-black cursor-pointer" onClick={() => setIsOpened(false)}>x</div>
             </form>
-                <div className="flex items-center justify-center bg-gray-200 font-bold">
+                <div className="flex items-center justify-center bg-gray-200 font-bold p-1">
                     <div className="grid grid-cols-5 w-full text-center">
                         <div>Nome</div>
                         <div>Tipo</div>
@@ -77,7 +76,7 @@ function Products() {
                     </div>
                 </div>
                 {data?.map((product) => (
-                    <div key={product.id} className="flex items-center justify-center bg-gray-100 border border-gray-300">
+                    <div key={product.id} className="flex items-center justify-center bg-gray-100 border border-gray-300 p-1">
                         <div className="grid grid-cols-5 w-full text-center">
                             <div>{product.nome}</div>
                             <div>{product.tipo}</div>

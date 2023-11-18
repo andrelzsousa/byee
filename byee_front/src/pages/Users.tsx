@@ -28,8 +28,8 @@ function Users() {
     return (
         <>
             <PageNav />
-            <div className="grid grid-cols-1 gap-2">
-                <div className="flex items-center justify-center bg-gray-200 font-bold">
+            <div className="grid grid-cols-1 gap-2 p-10">
+                <div className="flex items-center justify-center bg-gray-200 font-bold p-1">
                     <div className="grid grid-cols-5 w-full text-center">
                         <div>Id</div>
                         <div>Nome</div>
@@ -38,7 +38,7 @@ function Users() {
                     </div>
                 </div>
                 {users.map((user) => (
-                    <div key={user.id} className="flex items-center justify-center bg-gray-100 border border-gray-300">
+                    <div key={user.id} className="flex items-center justify-center bg-gray-100 border border-gray-300 p-1">
                         <div className="grid grid-cols-5 w-full text-center">
                             <div>{user.id}</div>
                             <div>{user.nome}</div>
