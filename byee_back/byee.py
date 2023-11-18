@@ -9,8 +9,8 @@ PORT = 8000
 def create_conection():
     connection = mysql.connector.connect(
         host='localhost',
-        user='root',
-        password='root',
+        user='luis',
+        password='71063699La*#',
         database="byee_database"
     )
     return connection
@@ -207,7 +207,7 @@ def delete_product(product_id):
     connection = create_conection()
     cursor = connection.cursor(dictionary=True)
     query = 'UPDATE Produto SET is_del = 1 WHERE id = %s'
-    values = (product_id,)
+    values = (product_id['id'],)
     cursor.execute(query, values)
     connection.commit()
     cursor.close()
