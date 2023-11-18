@@ -18,11 +18,12 @@ def create_conection():
 def get_all_users():
     connection = create_conection()
     cursor = connection.cursor(dictionary=True)
-    cursor.execute('SELECT * FROM Usuario')
+    cursor.execute('SELECT Usuario.id, Usuario.nome, Usuario.telefone, Usuario.is_del, Usuario.endereco_FK, endereco.rua, endereco.numero, endereco.bairro, endereco.cidade FROM Usuario JOIN endereco ON Usuario.endereco_FK = endereco.endereco_PK')
     users = cursor.fetchall()
     cursor.close()
     connection.close()
     return users
+
 
 def get_all_products():
     connection = create_conection()
@@ -112,7 +113,6 @@ def create_cart(user_id):
     values = (user_id)
     
     cursor.execute(query, values)
-    cart_id = cursor.lastrowid # Obtém o ID do carrinho criado
 
     connection.commit()
     cursor.close()
@@ -212,6 +212,18 @@ def delete_product(product_id):
     connection.commit()
     cursor.close()
     connection.close()
+
+def delete_addr(addr_id):
+    print(addr_id)
+    connection = create_conection()
+    cursor = connection.cursor(dictionary=True)
+    query = 'DELETE FROM endereco WHERE endereco_pk = %s'
+    values = (addr_id,)
+    cursor.execute(query, values)
+    connection.commit()
+    cursor.close()
+    connection.close()
+
 
 
 def update_product(updated_data):
@@ -333,7 +345,6 @@ class RequestHandler(http.server.BaseHTTPRequestHandler):
                 self.wfile.write(json.dumps({'cart_id': cart_id}).encode())
             else:
                 self._set_headers(400)
-
         elif self.path == '/create-product':
             content_length = int(self.headers['Content-Length'])
             post_data = self.rfile.read(content_length)
@@ -392,6 +403,7 @@ class RequestHandler(http.server.BaseHTTPRequestHandler):
             data = json.loads(put_data)
             delete_product(data)
             self._set_headers(200)
+            self._set_headers(200)
         elif self.path.startswith('/delete-user'):
             content_length = int(self.headers['Content-Length'])
             put_data = self.rfile.read(content_length)
@@ -401,10 +413,19 @@ class RequestHandler(http.server.BaseHTTPRequestHandler):
         else:
             self._set_headers(404)
     
-    # def do_DELETE(self):
-        
-    #     else:
-    #         self._set_headers(404)
+    def do_OPTIONS(self):
+        self._set_headers()
+
+    def do_DELETE(self):
+
+        if self.path.startswith('/delete-addr'):
+            addr_id = self.path.split('/')[-1]
+            delete_addr(addr_id)
+            self._set_headers(200)
+            self.send_header('Content-type', 'text/plain')
+            self.end_headers()
+        else:
+            self._set_headers(404)
 
 with socketserver.TCPServer(("", PORT), RequestHandler) as httpd:
     print(f"Conectado na porta {PORT}")
