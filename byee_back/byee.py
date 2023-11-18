@@ -192,15 +192,26 @@ def get_products_by_type(product_type):
     connection.close()
     return products
 
-def delete_product(data):
+def delete_user(data):
     connection = create_conection()
     cursor = connection.cursor(dictionary=True)
-    query = 'DELETE FROM Produto WHERE id = %s'
-    values = [data["id"]]
+    query = 'UPDATE Usuario SET is_del = 1 WHERE id = %s'
+    values = (data,)
     cursor.execute(query, values)
     connection.commit()
     cursor.close()
     connection.close()
+
+def delete_product(product_id):
+    connection = create_conection()
+    cursor = connection.cursor(dictionary=True)
+    query = 'UPDATE Produto SET is_del = 1 WHERE id = %s'
+    values = (product_id,)
+    cursor.execute(query, values)
+    connection.commit()
+    cursor.close()
+    connection.close()
+
 
 def update_product(updated_data):
     connection = create_conection()
@@ -348,18 +359,25 @@ class RequestHandler(http.server.BaseHTTPRequestHandler):
             update_data = json.loads(put_data)
             update_product(update_data)
             self._set_headers(200)
-        else:
-            self._set_headers(404)
-    
-    def do_DELETE(self):
-        if self.path.startswith('/delete-product'):
+        elif self.path.startswith('/delete-product'):
             content_length = int(self.headers['Content-Length'])
             put_data = self.rfile.read(content_length)
             data = json.loads(put_data)
             delete_product(data)
             self._set_headers(200)
+        elif self.path.startswith('/delete-user'):
+            content_length = int(self.headers['Content-Length'])
+            put_data = self.rfile.read(content_length)
+            data = json.loads(put_data)
+            delete_user(data)
+            self._set_headers(200)
         else:
             self._set_headers(404)
+    
+    # def do_DELETE(self):
+        
+    #     else:
+    #         self._set_headers(404)
 
 with socketserver.TCPServer(("", PORT), RequestHandler) as httpd:
     print(f"Conectado na porta {PORT}")

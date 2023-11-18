@@ -3,7 +3,6 @@ import axios from 'axios';
 import { Product } from "../types/Product";
 import { useMutation, useQueryClient } from 'react-query';
 import PageNav from '../components/PageNav';
-import { Link } from 'react-router-dom'
 // import { v4 as uuidv4 } from 'uuid';
 
 function CreateProduct() {
