@@ -9,6 +9,7 @@ interface Product {
     tipo: string;
     preco: number;
     SKU: string;
+    is_del: boolean;
     fk_Usuario_vendedor_fk: number;
 }
 
@@ -43,6 +44,15 @@ function Products() {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         const updatedProduct = {nome, tipo, preco: preco as number, SKU, fk_Usuario_vendedor_fk, id}
+   const handleDeleteClick = (productId :number) => {
+    try {
+        axios.put("http://localhost:8000/delete-product", productId)
+        window.alert("Produto deletado com sucesso. ");
+        window.location.href = '/products';
+    } catch (error) {
+        console.log(error)
+    }
+};
 
         await mutation.mutateAsync(updatedProduct)
     }
@@ -75,6 +85,7 @@ function Products() {
                     </div>
                 </div>
                 {data?.map((product) => (
+                  !product.is_del && (
                     <div key={product.id} className="flex items-center justify-center bg-gray-100 border border-gray-300 p-1">
                         <div className="grid grid-cols-5 w-full text-center">
                             <div>{product.nome}</div>
@@ -96,13 +107,10 @@ function Products() {
                                 >
                                     Editar
                                 </button>
-                                <button className="w-16 bg-red-500 text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-700 focus:ring-offset-2"
-                                >
-                                    Excluir
-                                </button>
+                                <button  onClick={() => product.id && handleDeleteClick(product.id)} className="w-16 bg-red-500 text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-700 focus:ring-offset-2">Excluir</button>
                             </div>
                         </div>
-                    </div>
+                    )
                 ))}
             </div>
         </>
