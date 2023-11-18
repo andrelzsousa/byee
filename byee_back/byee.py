@@ -2,6 +2,7 @@ import http.server
 import socketserver
 import json
 import mysql.connector
+from urllib.parse import unquote
 
 PORT = 8000
 
@@ -275,6 +276,7 @@ class RequestHandler(http.server.BaseHTTPRequestHandler):
         elif self.path.startswith('/products_by_type'):
             self._set_headers(200)
             product_type = self.path.split('/')[-1]
+            product_type = unquote(product_type)
             products = get_products_by_type(product_type)
             self.wfile.write(json.dumps(products).encode())
         else:

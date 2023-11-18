@@ -8,7 +8,13 @@ import PageNav from "../components/PageNav";
 
 
 function Home() {
-    const [cartId, setCartId] = useState<number>(0)
+    const [cartId, setCartId] = useState<number>(0) 
+    const [products, setProducts] = useState<Product[]>([])
+    const [tipo, setTipo] = useState<string>("Todos")
+    // const [roupas, setRoupas] = useState<Product[]>([])
+    // const [calcados, setCalcados] = useState<Product[]>([])
+    // const [acessorios, setAcessorios] = useState<Product[]>([])
+    // const [currentProducts, setCurrentProducts] = useState<Product[]>([])
 
     const queryClient = useQueryClient()
     
@@ -16,6 +22,35 @@ function Home() {
         const res = await axios.get("http://localhost:8000/products")
         return res.data
     })
+
+
+    useEffect(() => {
+        async function fetchData() {
+            console.log(tipo)
+            try{
+                if(tipo === "Todos"){
+                    setProducts(data as Product[])
+                    return
+                }
+                const res = await axios.get(`http://localhost:8000/products_by_type/${tipo}`)
+                if(tipo === "Roupa"){
+                    console.log(res.data)
+                    setProducts(res.data)
+                }
+                else if(tipo === "Calçado"){
+                    setProducts(res.data)
+                }
+                else if(tipo === "Acessório"){
+                    console.log(res.data)
+                    setProducts(res.data)
+                }
+                
+            } catch(error){
+                console.log(error)
+            }
+        }
+        fetchData()
+    }, [tipo, data])
 
     useEffect(() => {
         async function fetchData() {
@@ -43,8 +78,14 @@ function Home() {
         <div className="grid grid-cols-6 p-10">
             <div className="col-span-4">
                 <h1 className="text-2xl font-bold mb-4">Nossos Produtos</h1>
+                <div className="flex items-center gap-2 text-white mb-4">
+                    <div className="px-2 py-1 rounded-xl bg-black cursor-pointer" onClick={() => setTipo("Todos")}>Todos</div>
+                    <div className="px-2 py-1 rounded-xl bg-black cursor-pointer" onClick={() => setTipo("Roupa")}>Roupas</div>
+                    <div className="px-2 py-1 rounded-xl bg-black cursor-pointer" onClick={() => setTipo("Calçado")}>Calçados</div>
+                    <div className="px-2 py-1 rounded-xl bg-black cursor-pointer" onClick={() => setTipo("Acessório")}>Acessórios</div>
+                </div>
                 <div className="flex gap-x-4 gap-y-6 flex-wrap">
-                    {data?.map((product) => {
+                    {products?.map((product) => {
                         return(
                             <div className="shadow rounded-xl flex flex-col gap-1 items-center p-2 w-44 h-48 relative" key={product.id}>
                                 <img src={imgDefault} className="w-20 h-20 rounded-full"/>
