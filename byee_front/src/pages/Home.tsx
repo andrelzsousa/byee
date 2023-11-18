@@ -26,7 +26,6 @@ function Home() {
 
     useEffect(() => {
         async function fetchData() {
-            console.log(tipo)
             try{
                 if(tipo === "Todos"){
                     setProducts(data as Product[])
@@ -34,14 +33,12 @@ function Home() {
                 }
                 const res = await axios.get(`http://localhost:8000/products_by_type/${tipo}`)
                 if(tipo === "Roupa"){
-                    console.log(res.data)
                     setProducts(res.data)
                 }
                 else if(tipo === "Calçado"){
                     setProducts(res.data)
                 }
                 else if(tipo === "Acessório"){
-                    console.log(res.data)
                     setProducts(res.data)
                 }
                 
@@ -69,8 +66,6 @@ function Home() {
     }, {onSuccess: async () => {
         await queryClient.invalidateQueries(["cartItems"]);
     }})
-
-    console.log("cartId: " + cartId)
 
     return (
         <>

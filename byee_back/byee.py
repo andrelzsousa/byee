@@ -222,6 +222,22 @@ def update_product(updated_data):
     cursor.close()
     connection.close()
 
+def get_cart_total(cart_id):
+    connection = create_conection()
+    cursor = connection.cursor(dictionary=True)
+    
+    query = '''SELECT SUM(Produto.preco) AS total
+               FROM Produto
+               INNER JOIN Contem ON Produto.id = Contem.fk_Produto_id
+               WHERE Contem.fk_Carrinho_id = %s'''
+    values = (cart_id,)
+
+    cursor.execute(query, values)
+    cart_total = cursor.fetchone()
+    
+    cursor.close()
+    connection.close()
+    return float(cart_total['total']) if cart_total['total'] is not None else 0.0
 
 class RequestHandler(http.server.BaseHTTPRequestHandler):
 
@@ -240,8 +256,17 @@ class RequestHandler(http.server.BaseHTTPRequestHandler):
                 cart_id = int(self.path.split('/')[-1])
                 self._set_headers(200)
                 cart_items = get_cart_items_by_cart_id(cart_id)
-                print(cart_items)
                 self.wfile.write(json.dumps(cart_items).encode())
+            except Exception as e:
+                # Tratamento de erro genérico, ajuste conforme necessárioALTER TABLE Nota_fiscal_Envio_Venda MODIFY id INT AUTO_INCREMENT;
+                self.wfile.write(json.dumps({'error': str(e)}).encode())
+        elif self.path.startswith('/cart-total/'):
+            try:
+                # Extraindo o cart_id da URL
+                cart_id = int(self.path.split('/')[-1])
+                self._set_headers(200)
+                cart_total = get_cart_total(cart_id)
+                self.wfile.write(json.dumps(cart_total).encode())
             except Exception as e:
                 # Tratamento de erro genérico, ajuste conforme necessárioALTER TABLE Nota_fiscal_Envio_Venda MODIFY id INT AUTO_INCREMENT;
                 self.wfile.write(json.dumps({'error': str(e)}).encode())

@@ -29,8 +29,7 @@ function Products() {
 
     const postUpdateProduct = async (productData: Product) => {
         try {
-          const response = await axios.put('http://localhost:8000/update-product', productData);
-          console.log(response.data);
+          await axios.put('http://localhost:8000/update-product', productData);
         } catch (error) {
           console.error(error);
         }

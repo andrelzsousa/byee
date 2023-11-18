@@ -11,8 +11,7 @@ function CreateProduct() {
   
   const postUser = async (productData: Product) => {
     try {
-      const response = await axios.post('http://localhost:8000/create-product', productData);
-      console.log(response.data);
+      await axios.post('http://localhost:8000/create-product', productData);
     } catch (error) {
       console.error(error);
     }
