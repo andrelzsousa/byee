@@ -13,21 +13,28 @@ function ShopCart({cartId}: {cartId: any}) {
         return res.data
     })
 
-    console.log(data)
+    const {data: total} = useQuery<number>(['cartTotal'], async () => {
+        const res = await axios.get(`http://localhost:8000/cart-total/${5}`)
+        return res.data
+    })
 
     console.log(cartId)
 
     return (
-        <div className="col-span-2 bg-gray-500 rounded p-5">
-            <h1 className="font-bold text-3xl">Carrinho (id: {5})</h1>
+        <div className="col-span-2 bg-gray-300 rounded p-5">
+            <h1 className="font-bold text-3xl">Seu Carrinho</h1>
             {data?.map((product) => {
                 return(
-                    <div>
-                        <h3 className="font-bold text-xl">{product.nome}</h3>
+                    <div className=" flex justify-between p-1 shadow my-1 rounded">
+                        <h3 className="text-xl">{product.nome}</h3>
                         <p>R$ {product.preco}</p>
                     </div>
                 )
-            })}  
+            })}
+            <p className="my-2 font-bold"><span className="text-xl">Valor total:</span> R${total}</p>
+            <div>
+                <button className="bg-black text-white rounded px-2 py-1">Finalizar compra</button>
+            </div>  
         </div>
     )
 }

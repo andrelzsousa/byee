@@ -3,7 +3,6 @@ import axios from 'axios';
 import { Product } from "../types/Product";
 import { useMutation, useQueryClient } from 'react-query';
 import PageNav from '../components/PageNav';
-import { Link } from 'react-router-dom'
 // import { v4 as uuidv4 } from 'uuid';
 
 function CreateProduct() {
@@ -12,8 +11,7 @@ function CreateProduct() {
   
   const postUser = async (productData: Product) => {
     try {
-      const response = await axios.post('http://localhost:8000/create-product', productData);
-      console.log(response.data);
+      await axios.post('http://localhost:8000/create-product', productData);
     } catch (error) {
       console.error(error);
     }
@@ -52,11 +50,11 @@ function CreateProduct() {
             <input type="text" placeholder="Nome do produto" className='border border-gray-100 rounded p-1'/>
             <input type="text" placeholder="Preço" className='border border-gray-100 rounded p-1' />
             <select className='border border-gray-100 rounded p-1'>
-              <option value="">Categoria</option>
-              <option value="camisa">Camisa</option>
-              <option value="calca">Calça</option>
-              <option value="tenis">Tênis</option>
-            
+              <option value=""  disabled selected>Categoria</option>
+              <option value="" disabled selected>Categoria</option>
+                    <option value="Roupa">Roupa</option>
+                    <option value="Calçado">Calçado</option>
+                    <option value="Acessório">Acessório</option>
             </select>
             <input type="text" placeholder="SKU" className='border border-gray-100 rounded p-1' />
             <button className='py-2 px-4 bg-gray-100 rounded-full border border-black'>Cadastrar</button>
