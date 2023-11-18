@@ -1,7 +1,7 @@
 import { useState } from "react";
 import axios from 'axios';
-import PageNav from "../components/PageNav";
 import { useMutation, useQuery, useQueryClient } from "react-query";
+import PageNav from "../components/PageNav";
 
 interface Product {
     id?: number;
@@ -14,49 +14,56 @@ interface Product {
 }
 
 function Products() {
-    const [isOpened, setIsOpened] = useState<boolean>(false)
-    const [nome, setNome] = useState<string>("")
-    const [tipo, setTipo] = useState<string>("")
-    const [preco, setPreco] = useState<number | null>(null)
-    const [SKU, setSKU] = useState<string>("")
-    const [id, setId] = useState<number>(0)
-    const [fk_Usuario_vendedor_fk, setFk_Usuario_vendedor_fk] = useState<number>(0)
+    const [isOpened, setIsOpened] = useState<boolean>(false);
+    const [nome, setNome] = useState<string>("");
+    const [tipo, setTipo] = useState<string>("");
+    const [preco, setPreco] = useState<number | null>(null);
+    const [SKU, setSKU] = useState<string>("");
+    const [id, setId] = useState<number>(0);
+    const [fk_Usuario_vendedor_fk, setFk_Usuario_vendedor_fk] = useState<number>(0);
 
-    const queryClient = useQueryClient()
+    const queryClient = useQueryClient();
     const { data } = useQuery<Product[]>(['products'], async () => {
-        const res = await axios.get("http://localhost:8000/products")
-        return res.data
-    })
+        const res = await axios.get("http://localhost:8000/products");
+        return res.data;
+    });
 
     const postUpdateProduct = async (productData: Product) => {
         try {
-          await axios.put('http://localhost:8000/update-product', productData);
+            await axios.put('http://localhost:8000/update-product', productData);
         } catch (error) {
-          console.error(error);
+            console.error(error);
         }
-      };
-      
-      const mutation = useMutation(postUpdateProduct, {onSuccess: async () => {
-        await queryClient.invalidateQueries(["products"]);
-        setIsOpened(false)
-      }})
+    };
+
+    const mutation = useMutation(postUpdateProduct, {
+        onSuccess: async () => {
+            await queryClient.invalidateQueries(["products"]);
+            setIsOpened(false);
+        },
+    });
+
+    const handleDeleteClick = async (productId: number) => {
+        const decision = window.confirm("Realmente deseja apagar esse item?");
+        if (decision) {
+            try {
+                console.log(productId);
+                await axios.put("http://localhost:8000/delete-product", { id: productId });
+                window.alert("Produto deletado com sucesso.");
+                window.location.href = '/products';
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    };
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault()
-        const updatedProduct = {nome, tipo, preco: preco as number, SKU, fk_Usuario_vendedor_fk, id}
-   const handleDeleteClick = (productId :number) => {
-    try {
-        axios.put("http://localhost:8000/delete-product", productId)
-        window.alert("Produto deletado com sucesso. ");
-        window.location.href = '/products';
-    } catch (error) {
-        console.log(error)
-    }
-};
+        e.preventDefault();
+        const updatedProduct: Product = { nome, tipo, preco: preco as number, SKU, is_del: false, fk_Usuario_vendedor_fk, id };
 
-        await mutation.mutateAsync(updatedProduct)
-    }
-    
+        await mutation.mutateAsync(updatedProduct);
+    };
+
     return (
         <>
             <PageNav />
@@ -85,7 +92,7 @@ function Products() {
                     </div>
                 </div>
                 {data?.map((product) => (
-                  !product.is_del && (
+                    !product.is_del && (
                     <div key={product.id} className="flex items-center justify-center bg-gray-100 border border-gray-300 p-1">
                         <div className="grid grid-cols-5 w-full text-center">
                             <div>{product.nome}</div>
@@ -110,8 +117,8 @@ function Products() {
                                 <button  onClick={() => product.id && handleDeleteClick(product.id)} className="w-16 bg-red-500 text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-700 focus:ring-offset-2">Excluir</button>
                             </div>
                         </div>
-                    )
-                ))}
+                    </div>
+                )))}
             </div>
         </>
     )
