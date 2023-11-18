@@ -12,20 +12,20 @@ interface Product {
     fk_Usuario_vendedor_fk: number;
 }
 
-function Users() {
-    const [users, setUsers] = useState<Product[]>([])
+function Products() {
+    const [products, setProducts] = useState<Product[]>([])
 
     useEffect(() => {
         async function fetchData() {
             try {
                 const res = await axios.get("http://localhost:8000/products")
-                setUsers(res.data)
+                setProducts(res.data)
             } catch (error) {
                 console.log(error)
             }
         }
         fetchData()
-    }, [setUsers])
+    }, [setProducts])
 
     const handleDeleteClick = (productId :number) => {
         try {
@@ -50,18 +50,18 @@ function Users() {
                         <div>Ações</div>
                     </div>
                 </div>
-                {users.map((user) => (
+                {products.map((product) => (
                     // Verifica se o produto não está marcado como deletado (is_del === false)
-                    !user.is_del && (
-                        <div key={user.id} className="flex items-center justify-center bg-gray-100 border border-gray-300">
+                    !product.is_del && (
+                        <div key={product.id} className="flex items-center justify-center bg-gray-100 border border-gray-300">
                             <div className="grid grid-cols-5 w-full text-center">
-                                <div>{user.nome}</div>
-                                <div>{user.tipo}</div>
-                                <div>{user.preco}</div>
-                                <div>{user.SKU}</div>
+                                <div>{product.nome}</div>
+                                <div>{product.tipo}</div>
+                                <div>{product.preco}</div>
+                                <div>{product.SKU}</div>
                                 <div className="flex justify-around">
                                     <button className="w-16 bg-blue-500 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-700 focus:ring-offset-2">Editar</button>
-                                    <button  onClick={() => user.id && handleDeleteClick(user.id)} className="w-16 bg-red-500 text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-700 focus:ring-offset-2">Excluir</button>
+                                    <button  onClick={() => product.id && handleDeleteClick(product.id)} className="w-16 bg-red-500 text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-700 focus:ring-offset-2">Excluir</button>
                                 </div>
                             </div>
                         </div>
@@ -72,4 +72,4 @@ function Users() {
     )
 }
 
-export default Users;
+export default Products;
