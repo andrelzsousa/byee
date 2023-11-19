@@ -36,6 +36,14 @@ function Products() {
         }
     };
 
+    const postDeleteProduct = async (productId: number) => {
+        try {
+            await axios.put("http://localhost:8000/delete-product", { id: productId });
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
     const mutation = useMutation(postUpdateProduct, {
         onSuccess: async () => {
             await queryClient.invalidateQueries(["products"]);
@@ -43,19 +51,30 @@ function Products() {
         },
     });
 
-    const handleDeleteClick = async (productId: number) => {
-        const decision = window.confirm("Realmente deseja apagar esse item?");
-        if (decision) {
-            try {
-                console.log(productId);
-                await axios.put("http://localhost:8000/delete-product", { id: productId });
-                window.alert("Produto deletado com sucesso.");
-                window.location.href = '/products';
-            } catch (error) {
-                console.log(error);
-            }
-        }
-    };
+    const mutationDelete = useMutation(postDeleteProduct, {
+        onSuccess: async () => {
+            await queryClient.invalidateQueries(["products"]);
+                await queryClient.invalidateQueries(["cartItems"]);
+                await queryClient.invalidateQueries(["cartTotal"]);
+        },
+    });
+
+    // const handleDeleteClick = async (productId: number) => {
+    //     const decision = window.confirm("Realmente deseja apagar esse item?");
+    //     if (decision) {
+    //         try {
+    //             console.log(productId);
+    //             await axios.put("http://localhost:8000/delete-product", { id: productId });
+    //             window.alert("Produto deletado com sucesso.");
+    //             await queryClient.invalidateQueries(["products"]);
+    //             await queryClient.invalidateQueries(["cartItems"]);
+    //             await queryClient.invalidateQueries(["cartTotal"]);
+    //             window.location.href = '/products';
+    //         } catch (error) {
+    //             console.log(error);
+    //         }
+    //     }
+    // };
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -114,7 +133,7 @@ function Products() {
                                 >
                                     Editar
                                 </button>
-                                <button  onClick={() => product.id && handleDeleteClick(product.id)} className="w-16 bg-red-500 text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-700 focus:ring-offset-2">Excluir</button>
+                                <button  onClick={async () => await mutationDelete.mutateAsync(product.id as number)} className="w-16 bg-red-500 text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-700 focus:ring-offset-2">Excluir</button>
                             </div>
                         </div>
                     </div>

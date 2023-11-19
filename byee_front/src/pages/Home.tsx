@@ -67,6 +67,8 @@ function Home() {
         await queryClient.invalidateQueries(["cartItems"]);
     }})
 
+    console.log(products)
+
     return (
         <>
         <PageNav />
@@ -80,8 +82,8 @@ function Home() {
                     <div className="px-2 py-1 rounded-xl bg-black cursor-pointer" onClick={() => setTipo("Acessório")}>Acessórios</div>
                 </div>
                 <div className="flex gap-x-4 gap-y-6 flex-wrap">
-                    {products?.map((product) => {
-                        return(
+                    {products?.map((product) => 
+                        !product.is_del && (
                             <div className="shadow rounded-xl flex flex-col gap-1 items-center p-2 w-44 h-48 relative" key={product.id}>
                                 <img src={imgDefault} className="w-20 h-20 rounded-full"/>
                                 <h3 className="font-bold">{product.nome}</h3>
@@ -93,7 +95,7 @@ function Home() {
                                 >+</div>
                             </div>
                         )
-                    })}
+                    )}
                 </div>
             </div>
             <ShopCart cartId={cartId} />

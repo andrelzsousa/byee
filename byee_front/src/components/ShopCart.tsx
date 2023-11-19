@@ -23,14 +23,14 @@ function ShopCart({cartId}: {cartId: any}) {
     return (
         <div className="col-span-2 bg-gray-300 rounded p-5">
             <h1 className="font-bold text-3xl">Seu Carrinho</h1>
-            {data?.map((product) => {
-                return(
-                    <div className=" flex justify-between p-1 shadow my-1 rounded">
+            {data?.map((product) => 
+                !product.is_del && (
+                    <div className=" flex justify-between p-1 shadow my-1 rounded" key={product.id}>
                         <h3 className="text-xl">{product.nome}</h3>
                         <p>R$ {product.preco}</p>
                     </div>
                 )
-            })}
+            )}
             <p className="my-2 font-bold"><span className="text-xl">Valor total:</span> R${total}</p>
             <div>
                 <button className="bg-black text-white rounded px-2 py-1">Finalizar compra</button>

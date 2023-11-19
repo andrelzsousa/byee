@@ -4,5 +4,6 @@ export interface Product {
     tipo: string;
     preco: number;
     SKU: string;
+    is_del?: boolean;
     fk_Usuario_vendedor_fk: number;
 }
