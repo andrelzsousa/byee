@@ -6,11 +6,11 @@ interface User {
     id: number
     nome: string;
     telefone: string;
-    endereco_FK: number;
-    rua: string;
-    numero: string;
-    bairro: string;
-    cidade: string;
+    endereco_FK: number | null;
+    rua: string | null;
+    numero: string | null;
+    bairro: string | null;
+    cidade: string | null;
     fk_usuario_presente: number | null;
 }
 
@@ -72,7 +72,7 @@ function Users() {
                                 <div>{user.bairro ? user.bairro : 'Não informado'}</div>
                                 <div>{user.cidade ? user.cidade : 'Não informado'}</div>
                                 <div className="flex justify-around">
-                                    <button onClick={() => user.endereco_FK && handleDeleteClick(user.endereco_FK)} className="w-20 bg-red-500 text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-700 focus:ring-offset-2">Excluir Usuario</button>
+                                    <button onClick={() => user.endereco_FK && handleDeleteClick(user.endereco_FK)} className="w-20 bg-red-500 text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-700 focus:ring-offset-2">Excluir Endereço</button>
                                 </div>
                             </div>
                         </div>
