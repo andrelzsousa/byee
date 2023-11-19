@@ -16,14 +16,14 @@ CREATE TABLE Usuario (
     endereco_FK INT,
     fk_usuario_presente INT,
     is_del BOOL DEFAULT False,
-    FOREIGN KEY (endereco_FK) REFERENCES endereco(endereco_PK) ON DELETE CASCADE,
-    FOREIGN KEY (fk_usuario_presente) REFERENCES Usuario(id) ON DELETE CASCADE
+    FOREIGN KEY (endereco_FK) REFERENCES endereco(endereco_PK),
+    FOREIGN KEY (fk_usuario_presente) REFERENCES Usuario(id)
 );
 
 CREATE TABLE Carrinho_Usuario_Comprador (
     id INT AUTO_INCREMENT PRIMARY KEY,
     fk_Usuario_id INT,
-    FOREIGN KEY (fk_Usuario_id) REFERENCES Usuario(id) ON DELETE CASCADE
+    FOREIGN KEY (fk_Usuario_id) REFERENCES Usuario(id)
 );
 
 CREATE TABLE Produto (
@@ -34,15 +34,15 @@ CREATE TABLE Produto (
     SKU VARCHAR(255),
     fk_Usuario_vendedor_fk INT,
     is_del BOOL DEFAULT False,
-    FOREIGN KEY (fk_Usuario_vendedor_fk) REFERENCES Usuario(id) ON DELETE CASCADE
+    FOREIGN KEY (fk_Usuario_vendedor_fk) REFERENCES Usuario(id)
 );
 
 CREATE TABLE Contem (
     fk_Carrinho_id INT,
     fk_Produto_id INT,
     PRIMARY KEY (fk_Carrinho_id, fk_Produto_id),
-    FOREIGN KEY (fk_Carrinho_id) REFERENCES Carrinho_Usuario_Comprador(id) ON DELETE CASCADE,
-    FOREIGN KEY (fk_Produto_id) REFERENCES Produto(id) ON DELETE CASCADE
+    FOREIGN KEY (fk_Carrinho_id) REFERENCES Carrinho_Usuario_Comprador(id),
+    FOREIGN KEY (fk_Produto_id) REFERENCES Produto(id)
 );
 
 CREATE TABLE Nota_fiscal_Envio_Venda (
@@ -57,19 +57,19 @@ CREATE TABLE Nota_fiscal_Envio_Venda (
     data_venda DATE,
     valor_frete INT,
     fk_id_comprador INT,
-    FOREIGN KEY (fk_id_comprador) REFERENCES Carrinho_Usuario_Comprador(fk_Usuario_id) ON DELETE CASCADE
+    FOREIGN KEY (fk_id_comprador) REFERENCES Carrinho_Usuario_Comprador(fk_Usuario_id)
 );
 
 CREATE TABLE Brecho (
     cnpj VARCHAR(50) PRIMARY KEY,
     fk_Usuario_vendedor_fk INT,
-    FOREIGN KEY (fk_Usuario_vendedor_fk) REFERENCES Usuario(id) ON DELETE CASCADE
+    FOREIGN KEY (fk_Usuario_vendedor_fk) REFERENCES Usuario(id)
 );
 
 CREATE TABLE Pessoa_fisica (
     cpf VARCHAR(50) PRIMARY KEY,
     fk_Usuario_vendedor_fk INT,
-    FOREIGN KEY (fk_Usuario_vendedor_fk) REFERENCES Usuario(id) ON DELETE CASCADE
+    FOREIGN KEY (fk_Usuario_vendedor_fk) REFERENCES Usuario(id)
 );
 
 

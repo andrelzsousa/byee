@@ -6,7 +6,7 @@ from urllib.parse import unquote
 
 PORT = 8000
 
-def create_conection():
+def create_connection():
     connection = mysql.connector.connect(
         host='localhost',
         user='luis',
@@ -16,9 +16,9 @@ def create_conection():
     return connection
 
 def get_all_users():
-    connection = create_conection()
+    connection = create_connection()
     cursor = connection.cursor(dictionary=True)
-    cursor.execute('SELECT Usuario.id, Usuario.nome, Usuario.telefone, Usuario.is_del, Usuario.endereco_FK, endereco.rua, endereco.numero, endereco.bairro, endereco.cidade FROM Usuario JOIN endereco ON Usuario.endereco_FK = endereco.endereco_PK')
+    cursor.execute('SELECT Usuario.id, Usuario.nome, Usuario.telefone, Usuario.is_del, Usuario.endereco_FK, endereco.rua, endereco.numero, endereco.bairro, endereco.cidade FROM Usuario LEFT JOIN endereco ON Usuario.endereco_FK = endereco.endereco_PK')
     users = cursor.fetchall()
     cursor.close()
     connection.close()
@@ -26,7 +26,7 @@ def get_all_users():
 
 
 def get_all_products():
-    connection = create_conection()
+    connection = create_connection()
     cursor = connection.cursor(dictionary=True)
     cursor.execute('SELECT * FROM Produto')
     products = cursor.fetchall()
@@ -35,7 +35,7 @@ def get_all_products():
     return products
 
 def create_product(product_data):
-    connection = create_conection()
+    connection = create_connection()
     cursor = connection.cursor(dictionary=True)
     
     query = '''INSERT INTO Produto 
@@ -57,7 +57,7 @@ def create_product(product_data):
     return product_id
 
 def create_invoice(sale_data):
-    connection = create_conection()
+    connection = create_connection()
     cursor = connection.cursor()
     query = '''INSERT INTO Nota_fiscal_Envio_Venda 
                (valor, cnpj_emissor, codigo, data_geracao, status, transportadora, data_envio, data_venda, valor_frete, fk_id_comprador) 
@@ -83,7 +83,7 @@ def create_invoice(sale_data):
     return invoice_id
 
 def send_sale(invoice_id):
-    connection = create_conection()
+    connection = create_connection()
     cursor = connection.cursor()
 
     query = "UPDATE Nota_fiscal_Envio_Venda SET status = 'Enviada' WHERE id = %s"
@@ -94,7 +94,7 @@ def send_sale(invoice_id):
     return True
 
 def get_invoices_by_comprador(comprador_id):
-    connection = create_conection()
+    connection = create_connection()
     cursor = connection.cursor(dictionary=True)
 
     query = 'SELECT * FROM Nota_fiscal_Envio_Venda WHERE fk_id_comprador = %s'
@@ -106,7 +106,7 @@ def get_invoices_by_comprador(comprador_id):
     return invoices
 
 def create_cart(user_id):
-    connection = create_conection()
+    connection = create_connection()
     cursor = connection.cursor(dictionary=True)
 
     query = 'INSERT INTO Carrinho_Usuario_Comprador (fk_Usuario_id) VALUES (%s)'
@@ -120,7 +120,7 @@ def create_cart(user_id):
     return True
 
 def get_user_cart_id(user_id):
-    connection = create_conection()
+    connection = create_connection()
     cursor = connection.cursor(dictionary=True)
 
     query = 'SELECT id FROM Carrinho_Usuario_Comprador WHERE fk_Usuario_id = %s'
@@ -136,7 +136,7 @@ def get_user_cart_id(user_id):
         return cart_ids[0]['id']
     
 def get_cart_items_by_cart_id(cart_id):
-    connection = create_conection()
+    connection = create_connection()
     cursor = connection.cursor(dictionary=True)
 
     query = '''
@@ -162,7 +162,7 @@ def get_cart_items_by_cart_id(cart_id):
     return cart_items
 
 def add_product_to_cart(cart_id, product_id):
-    connection = create_conection()
+    connection = create_connection()
     cursor = connection.cursor()
 
     query = 'INSERT INTO Contem (fk_Carrinho_id, fk_Produto_id) VALUES (%s, %s)'
@@ -181,7 +181,7 @@ def add_product_to_cart(cart_id, product_id):
     return result
 
 def get_products_by_type(product_type):
-    connection = create_conection()
+    connection = create_connection()
     cursor = connection.cursor(dictionary=True)
     
     query = 'SELECT * FROM Produto WHERE tipo = %s'
@@ -194,7 +194,7 @@ def get_products_by_type(product_type):
     return products
 
 def delete_user(data):
-    connection = create_conection()
+    connection = create_connection()
     cursor = connection.cursor(dictionary=True)
     query = 'UPDATE Usuario SET is_del = 1 WHERE id = %s'
     values = (data,)
@@ -204,7 +204,7 @@ def delete_user(data):
     connection.close()
 
 def delete_product(product_id):
-    connection = create_conection()
+    connection = create_connection()
     cursor = connection.cursor(dictionary=True)
     query = 'UPDATE Produto SET is_del = 1 WHERE id = %s'
     values = (product_id['id'],)
@@ -213,10 +213,21 @@ def delete_product(product_id):
     cursor.close()
     connection.close()
 
+def upd_usr(addr_id):
+    connection = create_connection()
+    cursor = connection.cursor(dictionary=True)
+    query = 'UPDATE Usuario SET endereco_FK = NULL WHERE endereco_FK = %s'
+    values = (addr_id,)
+    cursor.execute(query, values)
+    connection.commit()
+    cursor.close()
+    connection.close()
+
 def delete_addr(addr_id):
     print(addr_id)
-    connection = create_conection()
+    connection = create_connection()
     cursor = connection.cursor(dictionary=True)
+    upd_usr(addr_id)
     query = 'DELETE FROM endereco WHERE endereco_pk = %s'
     values = (addr_id,)
     cursor.execute(query, values)
@@ -227,7 +238,7 @@ def delete_addr(addr_id):
 
 
 def update_product(updated_data):
-    connection = create_conection()
+    connection = create_connection()
     cursor = connection.cursor(dictionary=True)
     query = '''UPDATE Produto
                SET nome = %s, tipo = %s, preco = %s, SKU = %s, fk_Usuario_vendedor_fk = %s
@@ -246,7 +257,7 @@ def update_product(updated_data):
     connection.close()
 
 def get_cart_total(cart_id):
-    connection = create_conection()
+    connection = create_connection()
     cursor = connection.cursor(dictionary=True)
     
     query = '''SELECT SUM(Produto.preco) AS total
