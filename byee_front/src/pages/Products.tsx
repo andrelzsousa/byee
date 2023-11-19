@@ -1,7 +1,6 @@
 import { useState } from "react";
 import axios from 'axios';
 import { useMutation, useQuery, useQueryClient } from "react-query";
-import PageNav from "../components/PageNav";
 
 interface Product {
     id?: number;
@@ -85,7 +84,6 @@ function Products() {
 
     return (
         <>
-            <PageNav />
             <div className="grid grid-cols-1 gap-2 relative p-10">
             <form onSubmit={handleSubmit} className={`flex-col gap-4 p-5 absolute top-[45%] left-[50%] bg-gray-600 shadow rounded -translate-x-[50%] w-72 ${isOpened ? "flex" : "hidden"} transition-all`}>
                 <h1 className="font-bold text-2xl text-white">Atualizar produto</h1>

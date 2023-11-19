@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react"
 import axios from 'axios';
-import PageNav from "../components/PageNav";
 
 interface User {
     id: number
@@ -45,7 +44,6 @@ function Users() {
     
     return (
         <>
-            <PageNav />
             <div className="grid grid-cols-1 gap-2 p-10">
                 <div className="flex items-center justify-center bg-gray-200 font-bold p-1">
                     <div className="grid grid-cols-8 w-full text-center">

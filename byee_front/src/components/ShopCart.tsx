@@ -43,12 +43,11 @@ function ShopCart({cartId}: {cartId: any}) {
         };
 
         fetchCartTotal();
-    }, [cartId, data]); // Dependência: cartId
+    }, [cartId, data]);
 
     
 
     const createSale = async () => {
-        // Defina aqui os dados da venda, possivelmente pegando dados do carrinho
         const saleData = {
             valor: total,
             cnpj_emissor: "24.176.134/0001-26",
@@ -71,8 +70,6 @@ function ShopCart({cartId}: {cartId: any}) {
             console.error('Erro ao criar venda:', error);
         }
     };
-
-    // console.log(cartId)
 
     return (
         <div className="col-span-2 bg-gray-300 rounded p-5">

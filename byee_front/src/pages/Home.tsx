@@ -4,7 +4,6 @@ import  imgDefault  from "../assets/default.jpg";
 import { Product } from "../types/Product";
 import ShopCart from "../components/ShopCart";
 import { useMutation, useQuery, useQueryClient } from "react-query";
-import PageNav from "../components/PageNav";
 
 
 function Home() {
@@ -69,7 +68,6 @@ function Home() {
 
     return (
         <>
-        <PageNav />
         <div className="grid grid-cols-6 p-10">
             <div className="col-span-4">
                 <h1 className="text-2xl font-bold mb-4">Nossos Produtos</h1>

@@ -2,7 +2,6 @@
 import axios from 'axios';
 import { Product } from "../types/Product";
 import { useMutation, useQueryClient } from 'react-query';
-import PageNav from '../components/PageNav';
 // import { v4 as uuidv4 } from 'uuid';
 
 function CreateProduct() {
@@ -33,7 +32,7 @@ function CreateProduct() {
       await mutation.mutateAsync(newProduct);
       window.setTimeout(() => {
         window.alert("Produto Criado com sucesso");
-        window.location.href = '/';
+        window.location.href = '/products';
       }, 0);
     } catch (e) {
       window.alert("Erro ao criar produto. " + e);
@@ -43,7 +42,6 @@ function CreateProduct() {
 
     return (
       <>
-        <PageNav />
         <div className='flex items-center justify-center mt-28'>
           <form className='border border-black rounded-xl flex flex-col py-4 px-8 gap-2' onSubmit={handleSubmit}>
             <h1 className='text-2xl font-bold mb-2'>Cadastrar produto</h1>
