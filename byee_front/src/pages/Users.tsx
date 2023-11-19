@@ -21,7 +21,6 @@ function Users() {
         async function fetchData() {
             try {
               const response = await axios.get("http://localhost:8000/users");
-              console.log(response.data)
               setUsers(response.data);
             } catch (error) {
               console.error(error);

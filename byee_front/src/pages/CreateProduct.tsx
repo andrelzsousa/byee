@@ -50,8 +50,7 @@ function CreateProduct() {
             <input type="text" placeholder="Nome do produto" className='border border-gray-100 rounded p-1'/>
             <input type="text" placeholder="Preço" className='border border-gray-100 rounded p-1' />
             <select className='border border-gray-100 rounded p-1'>
-              <option value=""  disabled selected>Categoria</option>
-              <option value="" disabled selected>Categoria</option>
+                <option value="" disabled selected>Categoria</option>
                     <option value="Roupa">Roupa</option>
                     <option value="Calçado">Calçado</option>
                     <option value="Acessório">Acessório</option>

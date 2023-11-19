@@ -67,8 +67,6 @@ function Home() {
         await queryClient.invalidateQueries(["cartItems"]);
     }})
 
-    console.log(products)
-
     return (
         <>
         <PageNav />

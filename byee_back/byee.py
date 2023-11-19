@@ -3,6 +3,7 @@ import socketserver
 import json
 import mysql.connector
 from urllib.parse import unquote
+from datetime import datetime, date
 
 PORT = 8000
 
@@ -101,9 +102,16 @@ def get_invoices_by_comprador(comprador_id):
     cursor.execute(query, (comprador_id,))
     invoices = cursor.fetchall()
 
+    # Converter campos de data/hora em strings
+    for invoice in invoices:
+        for key, value in invoice.items():
+            if isinstance(value, (datetime, date)):
+                invoice[key] = value.isoformat()
+
     cursor.close()
     connection.close()
     return invoices
+
 
 def create_cart(user_id):
     connection = create_connection()
@@ -264,7 +272,7 @@ def get_cart_total(cart_id):
     query = '''SELECT SUM(Produto.preco) AS total
                FROM Produto
                INNER JOIN Contem ON Produto.id = Contem.fk_Produto_id
-               WHERE Contem.fk_Carrinho_id = %s'''
+               WHERE Contem.fk_Carrinho_id = %s AND Produto.is_del <> 1'''
     values = (cart_id,)
 
     cursor.execute(query, values)
@@ -301,6 +309,15 @@ class RequestHandler(http.server.BaseHTTPRequestHandler):
                 cart_id = int(self.path.split('/')[-1])
                 self._set_headers(200)
                 cart_total = get_cart_total(cart_id)
+                self.wfile.write(json.dumps(cart_total).encode())
+            except Exception as e:
+                # Tratamento de erro genérico, ajuste conforme necessárioALTER TABLE Nota_fiscal_Envio_Venda MODIFY id INT AUTO_INCREMENT;
+                self.wfile.write(json.dumps({'error': str(e)}).encode())
+        elif self.path.startswith('/get-user-invoices/'):
+            try:
+                user_id = int(self.path.split('/')[-1])
+                self._set_headers(200)
+                cart_total = get_invoices_by_comprador(user_id)
                 self.wfile.write(json.dumps(cart_total).encode())
             except Exception as e:
                 # Tratamento de erro genérico, ajuste conforme necessárioALTER TABLE Nota_fiscal_Envio_Venda MODIFY id INT AUTO_INCREMENT;
