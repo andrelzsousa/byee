@@ -282,6 +282,63 @@ def get_cart_total(cart_id):
     connection.close()
     return float(cart_total['total']) if cart_total['total'] is not None else 0.0
 
+def get_user_average_purchase_price(user_id):
+    connection = create_connection()
+    cursor = connection.cursor(dictionary=True)
+
+    query = '''
+    SELECT AVG(valor) AS media_precos_compras
+    FROM Nota_fiscal_Envio_Venda
+    WHERE fk_id_comprador = %s
+    '''
+    cursor.execute(query, (user_id,))
+    average_price = cursor.fetchone()['media_precos_compras']
+
+    cursor.close()
+    connection.close()
+
+    return float(average_price) if average_price is not None else 0.0
+
+
+def get_user_cheapest_purchase(user_id):
+    connection = create_connection()
+    cursor = connection.cursor(dictionary=True)
+
+    query = '''
+    SELECT id, valor
+    FROM Nota_fiscal_Envio_Venda
+    WHERE fk_id_comprador = %s
+    ORDER BY valor ASC
+    LIMIT 1
+    '''
+    cursor.execute(query, (user_id,))
+    cheapest_purchase = cursor.fetchone()
+
+    cursor.close()
+    connection.close()
+
+    return cheapest_purchase
+
+
+def get_user_most_expensive_purchase(user_id):
+    connection = create_connection()
+    cursor = connection.cursor(dictionary=True)
+
+    query = '''
+    SELECT id, valor
+    FROM Nota_fiscal_Envio_Venda
+    WHERE fk_id_comprador = %s
+    ORDER BY valor DESC
+    LIMIT 1
+    '''
+    cursor.execute(query, (user_id,))
+    most_expensive_purchase = cursor.fetchone()
+
+    cursor.close()
+    connection.close()
+
+    return most_expensive_purchase
+
 class RequestHandler(http.server.BaseHTTPRequestHandler):
 
     def _set_headers(self, status_code=200):
@@ -319,6 +376,33 @@ class RequestHandler(http.server.BaseHTTPRequestHandler):
                 self._set_headers(200)
                 cart_total = get_invoices_by_comprador(user_id)
                 self.wfile.write(json.dumps(cart_total).encode())
+            except Exception as e:
+                # Tratamento de erro genérico, ajuste conforme necessárioALTER TABLE Nota_fiscal_Envio_Venda MODIFY id INT AUTO_INCREMENT;
+                self.wfile.write(json.dumps({'error': str(e)}).encode())
+        elif self.path.startswith('/get-user-invoices-average/'):
+            try:
+                user_id = int(self.path.split('/')[-1])
+                self._set_headers(200)
+                average = get_user_average_purchase_price(user_id)
+                self.wfile.write(json.dumps(average).encode())
+            except Exception as e:
+                # Tratamento de erro genérico, ajuste conforme necessárioALTER TABLE Nota_fiscal_Envio_Venda MODIFY id INT AUTO_INCREMENT;
+                self.wfile.write(json.dumps({'error': str(e)}).encode())
+        elif self.path.startswith('/get-user-most-expensive-invoice/'):
+            try:
+                user_id = int(self.path.split('/')[-1])
+                self._set_headers(200)
+                expensive = get_user_most_expensive_purchase(user_id)
+                self.wfile.write(json.dumps(expensive).encode())
+            except Exception as e:
+                # Tratamento de erro genérico, ajuste conforme necessárioALTER TABLE Nota_fiscal_Envio_Venda MODIFY id INT AUTO_INCREMENT;
+                self.wfile.write(json.dumps({'error': str(e)}).encode())
+        elif self.path.startswith('/get-user-cheapest-invoice/'):
+            try:
+                user_id = int(self.path.split('/')[-1])
+                self._set_headers(200)
+                cheapest = get_user_cheapest_purchase(user_id)
+                self.wfile.write(json.dumps(cheapest).encode())
             except Exception as e:
                 # Tratamento de erro genérico, ajuste conforme necessárioALTER TABLE Nota_fiscal_Envio_Venda MODIFY id INT AUTO_INCREMENT;
                 self.wfile.write(json.dumps({'error': str(e)}).encode())
