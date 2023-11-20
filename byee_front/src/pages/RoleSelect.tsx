@@ -15,8 +15,8 @@ function RoleSelect() {
     
     return (
         <div>
-            <h1 className="font-bold text-5xl p-5">Escolha como desejar acessar a aplicação: </h1>
-            <div className="p-10 grid grid-cols-2 h-96 gap-10">
+            <h1 className="font-bold text-4xl pt-5 px-10">Escolha como desejar acessar a aplicação: </h1>
+            <div className="px-10 py-5 grid grid-cols-2 h-96 gap-10">
                 <div
                     className="bg-gray-300 rounded flex items-center justify-center text-5xl font-bold hover:scale-105 cursor-pointer transition-all"
                     onClick={() => {
@@ -28,7 +28,7 @@ function RoleSelect() {
                     Comprador
                 </div>
                 <div
-                    className="bg-gray-700 rounded flex items-center justify-center text-5xl font-bold hover:scale-105 cursor-pointer transition-all"
+                    className="bg-gray-700 text-white rounded flex items-center justify-center text-5xl font-bold hover:scale-105 cursor-pointer transition-all"
                     onClick={() => {
                         // setRole("admin")
                         navigate("/products")
