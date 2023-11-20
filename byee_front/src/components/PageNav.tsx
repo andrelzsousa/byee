@@ -1,4 +1,4 @@
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function PageNav() {
