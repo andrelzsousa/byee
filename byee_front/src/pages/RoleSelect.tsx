@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function RoleSelect({setRole}: {role:string; setRole: any}) {
+function RoleSelect() {
 
     const navigate = useNavigate();
 
@@ -20,8 +20,9 @@ function RoleSelect({setRole}: {role:string; setRole: any}) {
                 <div
                     className="bg-gray-300 rounded flex items-center justify-center text-5xl font-bold hover:scale-105 cursor-pointer transition-all"
                     onClick={() => {
-                        setRole("comprador")
+                        // setRole("comprador")
                         navigate("/home")
+                        localStorage.setItem("role", "comprador")
                     }}
                 >
                     Comprador
@@ -29,8 +30,9 @@ function RoleSelect({setRole}: {role:string; setRole: any}) {
                 <div
                     className="bg-gray-700 rounded flex items-center justify-center text-5xl font-bold hover:scale-105 cursor-pointer transition-all"
                     onClick={() => {
-                        setRole("admin")
+                        // setRole("admin")
                         navigate("/products")
+                        localStorage.setItem("role", "admin")
                     }}
                 >
                     Admin

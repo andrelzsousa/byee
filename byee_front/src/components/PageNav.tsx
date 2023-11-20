@@ -1,11 +1,12 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function PageNav({role, setRole}:{role:string; setRole: any}) {
+function PageNav() {
 
     const location = useLocation();
     const navigate = useNavigate();
     const showHeader = location.pathname !== '/';
+    const role = localStorage.getItem("role")
     
     return (showHeader &&
         <nav className="w-full h-28 bg-black flex text-white py-5 px-20 items-center justify-between">
@@ -30,7 +31,7 @@ function PageNav({role, setRole}:{role:string; setRole: any}) {
             <p className='pt-3 cursor-pointer hover:text-gray-300' 
             onClick={() => {
                 navigate('/')
-                setRole("")
+                localStorage.setItem("role", "")
             }}>Sair</p>
         </nav>
     )

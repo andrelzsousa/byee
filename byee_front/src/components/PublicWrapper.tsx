@@ -1,9 +1,10 @@
 import { useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 
-function PublicWrapper({children, role}: {children: React.ReactNode; role: string}) {
+function PublicWrapper({children}: {children: React.ReactNode}) {
 
     const navigate = useNavigate();
+    const role = localStorage.getItem("role")
 
     useEffect(() => {
 		if (role === "admin") {
