@@ -2,7 +2,7 @@ import http.server
 import socketserver
 import json
 from urllib.parse import unquote
-from delete import delete_addr
+from delete import delete_addr, remove_product_from_cart
 from get import get_all_products, get_all_users, get_cart_items_by_cart_id, get_cart_total, get_invoices_by_comprador, get_products_by_type, get_user_average_purchase_price, get_user_cart_id, get_user_cheapest_purchase, get_user_most_expensive_purchase
 from post import add_product_to_cart, create_cart, create_invoice, create_product
 from put import delete_product, delete_user, update_product
@@ -112,9 +112,6 @@ class RequestHandler(http.server.BaseHTTPRequestHandler):
         else:
             self._set_headers(404)
 
-    def do_OPTIONS(self):
-        self._set_headers(200)
-
     def do_POST(self):
         if self.path == '/create-cart':
             content_length = int(self.headers['Content-Length'])
@@ -206,8 +203,18 @@ class RequestHandler(http.server.BaseHTTPRequestHandler):
             self._set_headers(200)
             self.send_header('Content-type', 'text/plain')
             self.end_headers()
+        elif self.path.startswith('/remove-product-from-cart/'):
+            try:
+                cart_id, product_id = map(int, self.path.split('/')[-2:])
+                self._set_headers(200)
+                result = remove_product_from_cart(cart_id, product_id)
+                self.wfile.write(json.dumps({'result': result}).encode())
+            except Exception as e:
+                self._set_headers(400)
+                self.wfile.write(json.dumps({'error': str(e)}).encode())
         else:
             self._set_headers(404)
+
 
 with socketserver.TCPServer(("", PORT), RequestHandler) as httpd:
     print(f"Conectado na porta {PORT}")

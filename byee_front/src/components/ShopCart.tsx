@@ -1,7 +1,7 @@
 // import axios from "axios"
 import { useEffect, useState } from "react"
 
-import { useQuery } from "react-query"
+import { useQuery, useQueryClient } from "react-query"
 import { Product } from "../types/Product"
 import axios from "axios"
 import { useNavigate } from "react-router-dom";
@@ -19,6 +19,7 @@ function ShopCart({cartId}: {cartId: any}) {
     const [total, setTotal] = useState(0);
 
     const navigate = useNavigate();
+    const queryClient = useQueryClient();
     
     const {data} = useQuery<Product[]>(['cartItems'], async () => {
         const res = await axios.get(`http://localhost:8000/cart-items/${5}`)
@@ -71,6 +72,15 @@ function ShopCart({cartId}: {cartId: any}) {
         }
     };
 
+    const deleteItem = async (cartId: number, productId: number) => {
+        try {
+            await axios.delete(`http://localhost:8000/remove-product-from-cart/${cartId}/${productId}`);
+            queryClient.invalidateQueries('cartItems');
+        } catch (error) {
+            console.error('Erro ao remover produto:', error);
+        }
+    }
+
     return (
         <div className="col-span-2 bg-gray-300 rounded p-5">
             <h1 className="font-bold text-3xl">Seu Carrinho</h1>
@@ -78,7 +88,10 @@ function ShopCart({cartId}: {cartId: any}) {
                 !product.is_del && (
                     <div className=" flex justify-between p-1 shadow my-1 rounded" key={product.id}>
                         <h3 className="text-xl">{product.nome}</h3>
-                        <p>R$ {product.preco}</p>
+                        <div className="flex items-center gap-4">
+                            <p>R$ {product.preco}</p>
+                            <div className="cursor-pointer text-red-500 hover:text-red-700 font-bold text-xl" onClick={() => deleteItem(5, product.id as number)}>x</div>
+                        </div>
                     </div>
                 )
             )}

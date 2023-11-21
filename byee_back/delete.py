@@ -13,3 +13,22 @@ def delete_addr(addr_id):
     connection.commit()
     cursor.close()
     connection.close()
+
+def remove_product_from_cart(cart_id, product_id):
+    connection = create_connection()
+    cursor = connection.cursor()
+
+    query = 'DELETE FROM Contem WHERE fk_Carrinho_id = %s AND fk_Produto_id = %s'
+    values = (cart_id, product_id)
+
+    try:
+        cursor.execute(query, values)
+        connection.commit()
+        result = True
+    except Exception as e:
+        print("Erro ao remover produto do carrinho:", e)
+        result = False
+
+    cursor.close()
+    connection.close()
+    return result
