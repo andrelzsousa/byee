@@ -168,3 +168,75 @@ def get_user_most_expensive_purchase(user_id):
     connection.close()
 
     return most_expensive_purchase
+
+def find_most_expensive_products():
+    connection = create_connection()
+    cursor = connection.cursor(dictionary=True)
+
+    query = '''
+    SELECT *
+    FROM Produto
+    WHERE preco = (SELECT MAX(preco) FROM Produto)
+    '''
+
+    cursor.execute(query)
+    products = cursor.fetchall()
+
+    cursor.close()
+    connection.close()
+
+    return products
+
+def calculate_average_prices_by_type():
+    connection = create_connection()
+    cursor = connection.cursor(dictionary=True)
+
+    query = '''
+    SELECT tipo, AVG(preco) AS media_precos
+    FROM Produto
+    GROUP BY tipo
+    '''
+
+    cursor.execute(query)
+    average_prices = cursor.fetchall()
+
+    cursor.close()
+    connection.close()
+
+    return average_prices
+
+def find_users_with_items_in_cart():
+    connection = create_connection()
+    cursor = connection.cursor(dictionary=True)
+
+    query = '''
+    SELECT DISTINCT Usuario.*
+    FROM Usuario
+    INNER JOIN Carrinho_Usuario_Comprador ON Usuario.id = Carrinho_Usuario_Comprador.fk_Usuario_id
+    INNER JOIN Contem ON Carrinho_Usuario_Comprador.id = Contem.fk_Carrinho_id
+    '''
+
+    cursor.execute(query)
+    users = cursor.fetchall()
+
+    cursor.close()
+    connection.close()
+
+    return users
+
+def calculate_average_products_per_cart():
+    connection = create_connection()
+    cursor = connection.cursor(dictionary=True)
+
+    query = '''
+    SELECT AVG(quantidade_produtos) AS media_produtos_por_carrinho
+    FROM (SELECT fk_Carrinho_id, COUNT(*) AS quantidade_produtos FROM Contem GROUP BY fk_Carrinho_id) AS carrinho_info
+    '''
+
+    cursor.execute(query)
+    average_products = cursor.fetchone()['media_produtos_por_carrinho']
+
+    cursor.close()
+    connection.close()
+
+    return average_products
