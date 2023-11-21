@@ -21,13 +21,11 @@ class RequestHandler(http.server.BaseHTTPRequestHandler):
     def do_GET(self):
         if self.path.startswith('/cart-items/'):
             try:
-                # Extraindo o cart_id da URL
                 cart_id = int(self.path.split('/')[-1])
                 self._set_headers(200)
                 cart_items = get_cart_items_by_cart_id(cart_id)
                 self.wfile.write(json.dumps(cart_items).encode())
             except Exception as e:
-                # Tratamento de erro genérico, ajuste conforme necessárioALTER TABLE Nota_fiscal_Envio_Venda MODIFY id INT AUTO_INCREMENT;
                 self.wfile.write(json.dumps({'error': str(e)}).encode())
         elif self.path.startswith('/cart-total/'):
             try:
@@ -37,7 +35,6 @@ class RequestHandler(http.server.BaseHTTPRequestHandler):
                 cart_total = get_cart_total(cart_id)
                 self.wfile.write(json.dumps(cart_total).encode())
             except Exception as e:
-                # Tratamento de erro genérico, ajuste conforme necessárioALTER TABLE Nota_fiscal_Envio_Venda MODIFY id INT AUTO_INCREMENT;
                 self.wfile.write(json.dumps({'error': str(e)}).encode())
         elif self.path.startswith('/get-user-invoices/'):
             try:
@@ -46,7 +43,6 @@ class RequestHandler(http.server.BaseHTTPRequestHandler):
                 cart_total = get_invoices_by_comprador(user_id)
                 self.wfile.write(json.dumps(cart_total).encode())
             except Exception as e:
-                # Tratamento de erro genérico, ajuste conforme necessárioALTER TABLE Nota_fiscal_Envio_Venda MODIFY id INT AUTO_INCREMENT;
                 self.wfile.write(json.dumps({'error': str(e)}).encode())
         elif self.path.startswith('/get-user-invoices-average/'):
             try:
@@ -55,7 +51,6 @@ class RequestHandler(http.server.BaseHTTPRequestHandler):
                 average = get_user_average_purchase_price(user_id)
                 self.wfile.write(json.dumps(average).encode())
             except Exception as e:
-                # Tratamento de erro genérico, ajuste conforme necessárioALTER TABLE Nota_fiscal_Envio_Venda MODIFY id INT AUTO_INCREMENT;
                 self.wfile.write(json.dumps({'error': str(e)}).encode())
         elif self.path.startswith('/get-user-most-expensive-invoice/'):
             try:
@@ -64,7 +59,6 @@ class RequestHandler(http.server.BaseHTTPRequestHandler):
                 expensive = get_user_most_expensive_purchase(user_id)
                 self.wfile.write(json.dumps(expensive).encode())
             except Exception as e:
-                # Tratamento de erro genérico, ajuste conforme necessárioALTER TABLE Nota_fiscal_Envio_Venda MODIFY id INT AUTO_INCREMENT;
                 self.wfile.write(json.dumps({'error': str(e)}).encode())
         elif self.path.startswith('/get-user-cheapest-invoice/'):
             try:
@@ -73,28 +67,19 @@ class RequestHandler(http.server.BaseHTTPRequestHandler):
                 cheapest = get_user_cheapest_purchase(user_id)
                 self.wfile.write(json.dumps(cheapest).encode())
             except Exception as e:
-                # Tratamento de erro genérico, ajuste conforme necessárioALTER TABLE Nota_fiscal_Envio_Venda MODIFY id INT AUTO_INCREMENT;
                 self.wfile.write(json.dumps({'error': str(e)}).encode())
         elif self.path.startswith('/user-cart-id/'):
             try:
-                # Extraindo o user_id da URL
                 user_id = int(self.path.split('/')[-1])
                 cart_id = get_user_cart_id(user_id)
                 if cart_id is not None:
                     self._set_headers(200)
                     self.wfile.write(json.dumps({'cart_id': cart_id}).encode())
                 else:
-                    self._set_headers(404)  # Nenhum carrinho encontrado para o usuário
+                    self._set_headers(404)
                     self.wfile.write(json.dumps({'error': 'Cart not found'}).encode())
-            except ValueError:
-                # Erro ao converter user_id para int
-                self._set_headers(400)
-                self.wfile.write(json.dumps({'error': 'Invalid user_id'}).encode())
             except Exception as e:
-                # Outros erros
-                self._set_headers(500)
                 self.wfile.write(json.dumps({'error': str(e)}).encode())
-
         elif self.path == '/users':
             self._set_headers(200)
             users = get_all_users()
@@ -191,12 +176,8 @@ class RequestHandler(http.server.BaseHTTPRequestHandler):
             self._set_headers(200)
         else:
             self._set_headers(404)
-    
-    def do_OPTIONS(self):
-        self._set_headers()
 
     def do_DELETE(self):
-
         if self.path.startswith('/delete-addr'):
             addr_id = self.path.split('/')[-1]
             delete_addr(addr_id)

@@ -82,11 +82,11 @@ function Invoices() {
                     </div>
                     <div className="bg-black text-white border rounded shadow p-5 flex flex-col items-center gap-2 w-64">
                         <h2 className="text-lg">Compra mais cara</h2>
-                        <p className="font-bold text-xl">R$ {cheapest?.valor}</p>
+                        <p className="font-bold text-xl">R$ {expensive?.valor}</p>
                     </div>
                     <div className="bg-black text-white border rounded shadow p-5 flex flex-col items-center gap-2 w-64">
                         <h2 className="text-lg">Compra mais barata</h2>
-                        <p className="font-bold text-xl">R$ {expensive?.valor}</p>
+                        <p className="font-bold text-xl">R$ {cheapest?.valor}</p>
                     </div>
                 </div>
                 <div>
