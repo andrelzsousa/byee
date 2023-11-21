@@ -66,6 +66,10 @@ function ShopCart({cartId}: {cartId: any}) {
             const response = await axios.post('http://localhost:8000/payment-invoice', saleData);
             console.log('Venda criada com sucesso:', response.data);
             alert("Compra realizada com sucesso");
+            data?.forEach(async (product) => {
+                await axios.delete(`http://localhost:8000/remove-product-from-cart/${5}/${product.id}`);
+            });
+            queryClient.invalidateQueries('cartItems');
             navigate('/invoices');
         } catch (error) {
             console.error('Erro ao criar venda:', error);
